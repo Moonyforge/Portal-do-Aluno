@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,8 +15,23 @@ jobs:
       - name: Extrair pacote de entrega
         run: tar -xzf Portal-do-Aluno-entrega.tar.gz
 
-      - name: Construir imagem do backend
-        run: docker build -t portal-backend-test ./Portal-do-Aluno-entrega/backend
+      - name: Preparar arquivos de ambiente
+        run: |
+          cp Portal-do-Aluno-entrega/backend/.env.example Portal-do-Aluno-entrega/backend/.env
+          cp Portal-do-Aluno-entrega/frontend/.env.example Portal-do-Aluno-entrega/frontend/.env
 
-      - name: Construir imagem do frontend
-        run: docker build -t portal-frontend-test ./Portal-do-Aluno-entrega/frontend
+      - name: Construir e iniciar os servicos
+        run: docker compose -f Portal-do-Aluno-entrega/compose.yaml up -d --build
+
+      - name: Verificar containers
+        run: |
+          sleep 10
+          docker compose -f Portal-do-Aluno-entrega/compose.yaml ps
+          docker compose -f Portal-do-Aluno-entrega/compose.yaml logs --no-color
+
+          docker compose -f Portal-do-Aluno-entrega/compose.yaml ps --status running --services | grep -qx backend
+          docker compose -f Portal-do-Aluno-entrega/compose.yaml ps --status running --services | grep -qx frontend
+
+      - name: Encerrar containers
+        if: always()
+        run: docker compose -f Portal-do-Aluno-entrega/compose.yaml down -v
