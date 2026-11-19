@@ -86,10 +86,10 @@
                 </div>
                 
                 <div class="user-profile">
-                    <div class="user-avatar">JS</div>
+                    <div class="user-avatar">{{ nome|slice:":1"|upper }}</div>
                     <div class="user-info">
-                        <h4>João Silva</h4>
-                        <p>3º Período</p>
+                        <h4>{{ nome }}</h4>
+                        <p>Portal do Aluno</p>
                     </div>
                     <div class="notification-icon">
                         <i class="fas fa-bell"></i>
@@ -122,18 +122,14 @@
                         <div class="data-label">Período</div>
                         <div class="data-value">{{ aluno.periodo }}</div>
                     </div>
-                    <div class="data-card">
-                        <div class="data-label">Status</div>
-                        <div class="data-value">Ativo</div>
-                    </div>
                 </div>
                 
                 <div class="edit-profile-section">
-                    <h3 class="edit-profile-title">Atualizar Informações</h3>
-                    <p class="edit-profile-subtitle">Mantenha seus dados sempre atualizados para receber informações importantes</p>
-                    <a href="#" class="edit-btn">
-                        <i class="fas fa-edit"></i> Editar Perfil
-                    </a>
+                    <h3 class="edit-profile-title">Atualização de Informações</h3>
+                    <p class="edit-profile-subtitle">
+                        A edição dos dados pessoais ainda não está disponível nesta etapa.
+                        Em caso de necessidade, entre em contato com a secretaria.
+                    </p>
                 </div>
             </section>
         </main>

@@ -86,10 +86,10 @@
                 </div>
                 
                 <div class="user-profile">
-                    <div class="user-avatar">JS</div>
+                    <div class="user-avatar">{{ nome|slice:":1"|upper }}</div>
                     <div class="user-info">
-                        <h4>João Silva</h4>
-                        <p>3º Período</p>
+                        <h4>{{ nome }}</h4>
+                        <p>Portal do Aluno</p>
                     </div>
                     <div class="notification-icon">
                         <i class="fas fa-bell"></i>
@@ -98,56 +98,86 @@
                 </div>
             </header>
 
-            <!-- Upload Section -->
+            <!-- Solicitação de Documento -->
             <section class="upload-section">
-                <h3 class="upload-title">Enviar Documento</h3>
-                <p class="upload-subtitle">Faça upload de seus documentos acadêmicos de forma segura</p>
-                <a href="#" class="upload-btn">
-                    <i class="fas fa-cloud-upload-alt"></i> Enviar Arquivo
-                </a>
+                <h3 class="upload-title">Solicitar Documento</h3>
+                <p class="upload-subtitle">Escolha o documento desejado e informe a finalidade da solicitação.</p>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="message {{ message.tags }}">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="document_type">Tipo de documento</label>
+                        <select name="document_type" id="document_type" required>
+                            <option value="">Selecione uma opção</option>
+                            {% for tipo in tipos_documento %}
+                                <option value="{{ tipo.id }}">{{ tipo.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="campo_finalidade">Finalidade</label>
+                        <input type="text" name="campo_finalidade"
+                               id="campo_finalidade"
+                               placeholder="Informe para que precisa do documento"
+                               required>
+                    </div>
+
+                    <button type="submit" class="upload-btn">
+                        <i class="fas fa-paper-plane"></i> Solicitar documento
+                    </button>
+                </form>
             </section>
 
-            <!-- Documents Section -->
+            <!-- Acompanhamento das Solicitações -->
             <section class="content-section">
-                <h2 class="section-title">Documentos</h2>
-                
+                <h2 class="section-title">Minhas Solicitações</h2>
+
                 {% if documentos %}
                 <div class="documents-grid">
                     {% for doc in documentos %}
                     <div class="document-card">
                         <div class="document-header">
-                            <div class="document-icon {% if 'pdf' in doc.tipo|lower %}pdf{% elif 'doc' in doc.tipo|lower %}doc{% elif 'img' in doc.tipo|lower or 'jpg' in doc.tipo|lower or 'png' in doc.tipo|lower %}img{% else %}default{% endif %}">
-                                {% if 'pdf' in doc.tipo|lower %}
-                                    <i class="fas fa-file-pdf"></i>
-                                {% elif 'doc' in doc.tipo|lower %}
-                                    <i class="fas fa-file-word"></i>
-                                {% elif 'img' in doc.tipo|lower or 'jpg' in doc.tipo|lower or 'png' in doc.tipo|lower %}
-                                    <i class="fas fa-file-image"></i>
-                                {% else %}
-                                    <i class="fas fa-file"></i>
-                                {% endif %}
+                            <div class="document-icon default">
+                                <i class="fas fa-file-alt"></i>
                             </div>
                             <div class="document-info">
-                                <h3>{{ doc.nome }}</h3>
-                                <span class="document-type">{{ doc.tipo }}</span>
+                                <h3>{{ doc.document_type.name }}</h3>
+                                <span class="document-type">
+                                    Protocolo: {{ doc.protocol }}
+                                </span>
                             </div>
                         </div>
-                        
+
                         <div class="document-meta">
                             <div class="document-date">
                                 <i class="fas fa-calendar"></i>
-                                {{ doc.data_upload }}
+                                {{ doc.created_at }}
                             </div>
-                            <div class="document-size">2.5 MB</div>
+                            <div class="document-size">
+                                {{ doc.status_display }}
+                            </div>
                         </div>
-                        
+
                         <div class="document-actions">
-                            <a href="#" class="action-btn download-btn">
-                                <i class="fas fa-download"></i> Download
+                            <span class="action-btn">
+                                <i class="fas fa-info-circle"></i>
+                                {{ doc.status_display }}
+                            </span>
+
+                            {% if doc.has_file %}
+                            <a class="action-btn"
+                               href="{% url 'download_documento' doc.protocol %}">
+                                <i class="fas fa-download"></i>
+                                Baixar PDF
                             </a>
-                            <a href="#" class="action-btn view-btn">
-                                <i class="fas fa-eye"></i> Visualizar
-                            </a>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -155,8 +185,9 @@
                 {% else %}
                 <div class="empty-state">
                     <i class="fas fa-folder-open"></i>
-                    <h3>Nenhum documento encontrado</h3>
-                    <p>Você ainda não possui documentos disponíveis.<br>Faça upload de seus documentos ou entre em contato com a secretaria.</p>
+                    <h3>Nenhuma solicitação encontrada</h3>
+                    <p>Você ainda não solicitou documentos.<br>
+                    Utilize o formulário acima para enviar sua solicitação à secretaria.</p>
                 </div>
                 {% endif %}
             </section>

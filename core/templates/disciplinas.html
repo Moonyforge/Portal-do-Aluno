@@ -86,10 +86,10 @@
                 </div>
                 
                 <div class="user-profile">
-                    <div class="user-avatar">JS</div>
+                    <div class="user-avatar">{{ nome|slice:":1"|upper }}</div>
                     <div class="user-info">
-                        <h4>João Silva</h4>
-                        <p>3º Período</p>
+                        <h4>{{ nome }}</h4>
+                        <p>Portal do Aluno</p>
                     </div>
                     <div class="notification-icon">
                         <i class="fas fa-bell"></i>
@@ -128,8 +128,8 @@
                 {% else %}
                 <div class="empty-state">
                     <i class="fas fa-book-open"></i>
-                    <h3>Nenhuma disciplina encontrada</h3>
-                    <p>Você ainda não está matriculado em nenhuma disciplina.<br>Entre em contato com a secretaria para mais informações.</p>
+                    <h3>Integração acadêmica pendente</h3>
+                    <p>As disciplinas serão exibidas aqui quando a integração com o sistema acadêmico estiver disponível.</p>
                 </div>
                 {% endif %}
             </section>

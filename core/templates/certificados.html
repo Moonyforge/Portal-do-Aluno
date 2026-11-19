@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Aluno - Meus Certificados</title>
+    <link rel="stylesheet" href="{% static 'core/css/documentos.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="{% url 'dashboard' %}" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'pagamentos' %}" class="nav-link">
+                            <i class="fas fa-credit-card"></i>
+                            Pagamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'dados_pessoais' %}" class="nav-link">
+                            <i class="fas fa-edit"></i>
+                            Dados Pessoais
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'disciplinas' %}" class="nav-link">
+                            <i class="fas fa-book"></i>
+                            Disciplinas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'documentos' %}" class="nav-link">
+                            <i class="fas fa-file-alt"></i>
+                            Documentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'certificados' %}" class="nav-link active"><i class="fas fa-certificate"></i>Meus Certificados</a></li>
+                    <li class="nav-item"><a href="{% url 'notas' %}" class="nav-link">
+                            <i class="fas fa-sticky-note"></i>
+                            Notas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-bell"></i>
+                            Avisos
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="logout-btn">
+                    <a href="{% url 'logout' %}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">{{ nome|slice:":1"|upper }}</div>
+                    <div class="user-info">
+                        <h4>{{ nome }}</h4>
+                        <p>Portal do Aluno</p>
+                    </div>
+                    <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="content-section">
+                <h2 class="section-title">Meus Certificados</h2>
+                <p class="upload-subtitle">Consulte e baixe os certificados disponibilizados pela instituição.</p>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="message {{ message.tags }}">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+
+                {% if certificados %}
+                <div class="documents-grid">
+                    {% for certificado in certificados %}
+                    <div class="document-card">
+                        <div class="document-header">
+                            <div class="document-icon default"><i class="fas fa-certificate"></i></div>
+                            <div class="document-info">
+                                <h3>{{ certificado.title }}</h3>
+                                <span class="document-type">{{ certificado.category }}</span>
+                            </div>
+                        </div>
+                        <div class="document-meta">
+                            <div class="document-date">
+                                <i class="fas fa-calendar"></i>
+                                {{ certificado.created_at|date:"d/m/Y" }}
+                            </div>
+                        </div>
+                        {% if certificado.description %}
+                            <p>{{ certificado.description }}</p>
+                        {% endif %}
+                        <div class="document-actions">
+                            <a class="action-btn" href="{% url 'download_certificado' certificado.id %}">
+                                <i class="fas fa-download"></i> Baixar certificado
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-certificate"></i>
+                    <h3>Nenhum certificado disponível</h3>
+                    <p>Quando a secretaria disponibilizar seus certificados, eles aparecerão aqui.</p>
+                </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>
+

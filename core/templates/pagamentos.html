@@ -86,10 +86,10 @@
                 </div>
                 
                 <div class="user-profile">
-                    <div class="user-avatar">JS</div>
+                    <div class="user-avatar">{{ nome|slice:":1"|upper }}</div>
                     <div class="user-info">
-                        <h4>João Silva</h4>
-                        <p>3º Período</p>
+                        <h4>{{ nome }}</h4>
+                        <p>Portal do Aluno</p>
                     </div>
                     <div class="notification-icon">
                         <i class="fas fa-bell"></i>
@@ -101,28 +101,14 @@
             <!-- Payments Section -->
             <section class="content-section">
                 <h2 class="section-title">Pagamentos</h2>
-                <table class="payments-table">
-                    <thead>
-                        <tr>
-                            <th>Descrição</th>
-                            <th>Valor</th>
-                            <th>Data</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in pagamentos %}
-                        <tr>
-                            <td data-label="Descrição">{{ p.descricao }}</td>
-                            <td data-label="Valor">R$ {{ p.valor }}</td>
-                            <td data-label="Data">{{ p.data }}</td>
-                            <td data-label="Status" class="status-{{ p.status|lower }}">{{ p.status }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="4" style="text-align: center;">Nenhum pagamento registrado.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="empty-state">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>Área financeira indisponível nesta etapa</h3>
+                    <p>
+                        A consulta de pagamentos ainda não faz parte
+                        do escopo atual do Portal do Aluno.
+                    </p>
+                </div>
             </section>
         </main>
     </div>

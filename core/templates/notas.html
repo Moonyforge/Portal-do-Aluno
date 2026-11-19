@@ -86,10 +86,10 @@
                 </div>
                 
                 <div class="user-profile">
-                    <div class="user-avatar">JS</div>
+                    <div class="user-avatar">{{ nome|slice:":1"|upper }}</div>
                     <div class="user-info">
-                        <h4>João Silva</h4>
-                        <p>3º Período</p>
+                        <h4>{{ nome }}</h4>
+                        <p>Portal do Aluno</p>
                     </div>
                     <div class="notification-icon">
                         <i class="fas fa-bell"></i>
@@ -98,37 +98,18 @@
                 </div>
             </header>
 
-            <!-- Summary Cards -->
-            <div class="summary-cards">
-                <div class="summary-card">
-                    <div class="summary-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="summary-value">8.5</div>
-                    <div class="summary-label">Média Geral</div>
+            <!-- Aviso de integração acadêmica -->
+            <section class="content-section">
+                <div class="empty-state">
+                    <i class="fas fa-plug"></i>
+                    <h3>Integração acadêmica pendente</h3>
+                    <p>
+                        As notas serão exibidas aqui quando a integração
+                        com o sistema acadêmico estiver disponível.
+                        Nenhuma nota fictícia será apresentada.
+                    </p>
                 </div>
-                <div class="summary-card">
-                    <div class="summary-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="summary-value">9.2</div>
-                    <div class="summary-label">Maior Nota</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <div class="summary-value">12</div>
-                    <div class="summary-label">Avaliações</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="summary-value">85%</div>
-                    <div class="summary-label">Aproveitamento</div>
-                </div>
-            </div>
+            </section>
 
             <!-- Grades Section -->
             <section class="content-section">
