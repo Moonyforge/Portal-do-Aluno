@@ -1,0 +1,22 @@
+
+name: Validacao Docker - Portal do Aluno
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Extrair pacote de entrega
+        run: tar -xzf Portal-do-Aluno-entrega.tar.gz
+
+      - name: Construir imagem do backend
+        run: docker build -t portal-backend-test ./Portal-do-Aluno-entrega/backend
+
+      - name: Construir imagem do frontend
+        run: docker build -t portal-frontend-test ./Portal-do-Aluno-entrega/frontend
