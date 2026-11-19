@@ -52,3 +52,5 @@ build/
 # Sistema operacional
 .DS_Store
 Thumbs.db
+# Documentos privados dos usuários
+private_media/

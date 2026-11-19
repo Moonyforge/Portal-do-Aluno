@@ -12,14 +12,17 @@ class Command(BaseCommand):
             raise CommandError("seed_demo só pode ser executado com DEBUG=True.")
 
         users = [
-            ("secretaria", "Secretaria@123", User.Role.STAFF, "Maria", "Secretaria", None),
-            ("20260001", "Aluno@123456", User.Role.STUDENT, "Ana", "Souza", "20260001"),
-            ("20260002", "Aluno@123456", User.Role.STUDENT, "Bruno", "Lima", "20260002"),
+            ("secretaria", "secretaria@exemplo.com", "Secretaria@123", User.Role.STAFF, "Maria", "Secretaria", None),
+            ("20260001", "ana.souza@exemplo.com", "Aluno@123456", User.Role.STUDENT, "Ana", "Souza", "20260001"),
+            ("20260002", "bruno.lima@exemplo.com", "Aluno@123456", User.Role.STUDENT, "Bruno", "Lima", "20260002"),
         ]
-        for username, password, role, first, last, reg in users:
+        for username, email, password, role, first, last, reg in users:
             user, created = User.objects.get_or_create(
                 username=username,
-                defaults={"role": role, "first_name": first, "last_name": last},
+                defaults={
+                    "email": email, "role": role,
+                    "first_name": first, "last_name": last,
+                },
             )
             if created:
                 user.set_password(password)

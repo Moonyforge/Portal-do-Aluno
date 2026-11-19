@@ -11,8 +11,11 @@ class AuthTests(APITestCase):
         cache.clear()
         self.student = make_student("20260001", first="Ana", last="Souza")
 
-    def _login(self, password=PASSWORD):
-        return self.client.post("/api/auth/login/", {"username": "20260001", "password": password})
+    def _login(self, password=PASSWORD, email=None):
+        return self.client.post(
+            "/api/auth/login/",
+            {"email": email or self.student.email, "password": password},
+        )
 
     def test_login_valido_retorna_tokens(self):
         resp = self._login()
@@ -22,6 +25,16 @@ class AuthTests(APITestCase):
 
     def test_login_invalido_retorna_401(self):
         self.assertEqual(self._login("errada").status_code, 401)
+
+    def test_login_com_email_inexistente_retorna_401(self):
+        self.assertEqual(
+            self._login(email="inexistente@teste.portal.local").status_code, 401
+        )
+
+    def test_login_aceita_email_em_maiusculas(self):
+        resp = self._login(email=self.student.email.upper())
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("access", resp.data)
 
     def test_me_sem_token_retorna_401(self):
         self.assertEqual(self.client.get("/api/me/").status_code, 401)
@@ -40,7 +53,7 @@ class AuthTests(APITestCase):
         self.assertEqual(self.client.post("/api/auth/refresh/", {"refresh": refresh}).status_code, 401)
 
     def test_superusuario_recebe_perfil_admin(self):
-        su = User.objects.create_superuser(username="root", password="x" * 12)
+        su = User.objects.create_superuser(username="root", email="root@teste.portal.local", password="x" * 12)
         self.assertEqual(su.role, User.Role.ADMIN)
 
     def test_limite_de_tentativas_de_login(self):

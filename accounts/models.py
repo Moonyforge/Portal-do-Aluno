@@ -8,18 +8,18 @@ class User(AbstractUser):
         STAFF = "STAFF", "Secretaria"
         ADMIN = "ADMIN", "Administrador"
 
+    email = models.EmailField("e-mail", unique=True)
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.STUDENT)
 
-    @property
-    def is_secretary(self) -> bool:
-        return self.role in (self.Role.STAFF, self.Role.ADMIN)
-
     def save(self, *args, **kwargs):
-        # Superusuário criado via createsuperuser sempre nasce como administrador
+        self.email = self.email.strip().lower()
         if self.is_superuser:
             self.role = self.Role.ADMIN
         super().save(*args, **kwargs)
 
+    @property
+    def is_secretary(self) -> bool:
+        return self.role in (self.Role.STAFF, self.Role.ADMIN)
 
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student_profile")

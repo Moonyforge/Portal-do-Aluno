@@ -34,7 +34,8 @@ class PrivateMediaMixin:
 
 def make_student(username, first="Aluno", last="Teste", external_ids=None):
     user = User.objects.create_user(
-        username=username, password=PASSWORD, first_name=first, last_name=last,
+        username=username, email=f"{username}@teste.portal.local",
+        password=PASSWORD, first_name=first, last_name=last,
         role=User.Role.STUDENT,
     )
     StudentProfile.objects.create(
@@ -46,7 +47,8 @@ def make_student(username, first="Aluno", last="Teste", external_ids=None):
 
 def make_secretary(username="secretaria", role=User.Role.STAFF):
     return User.objects.create_user(
-        username=username, password=PASSWORD, first_name="Maria", last_name="Secretaria", role=role,
+        username=username, email=f"{username}@teste.portal.local",
+        password=PASSWORD, first_name="Maria", last_name="Secretaria", role=role,
     )
 
 
