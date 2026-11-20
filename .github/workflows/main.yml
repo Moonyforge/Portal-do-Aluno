@@ -1,4 +1,5 @@
 
+
 name: Validacao Docker - Portal do Aluno
 
 on:
@@ -32,6 +33,16 @@ jobs:
           docker compose -f Portal-do-Aluno-entrega/compose.yaml ps --status running --services | grep -qx backend
           docker compose -f Portal-do-Aluno-entrega/compose.yaml ps --status running --services | grep -qx frontend
 
+      - name: Testar resposta HTTP
+        run: |
+          for port in 8000 8001; do
+            code=$(curl --retry 10 --retry-delay 3 --retry-connrefused -sS -o /dev/null -w "%{http_code}" http://localhost:$port/)
+            echo "Porta $port: HTTP $code"
+            test "$code" -ge 200 && test "$code" -lt 500
+          done
+
       - name: Encerrar containers
         if: always()
+        run: docker compose -f Portal-do-Aluno-entrega/compose.yaml down -v
+
         run: docker compose -f Portal-do-Aluno-entrega/compose.yaml down -v
