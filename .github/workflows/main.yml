@@ -45,4 +45,4 @@ jobs:
         if: always()
         run: docker compose -f Portal-do-Aluno-entrega/compose.yaml down -v
 
-        run: docker compose -f Portal-do-Aluno-entrega/compose.yaml down -v
+     
