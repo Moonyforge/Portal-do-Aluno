@@ -1,5 +1,4 @@
 
-
 name: Validacao Docker - Portal do Aluno
 
 on:
@@ -29,7 +28,6 @@ jobs:
           sleep 10
           docker compose -f Portal-do-Aluno-entrega/compose.yaml ps
           docker compose -f Portal-do-Aluno-entrega/compose.yaml logs --no-color
-
           docker compose -f Portal-do-Aluno-entrega/compose.yaml ps --status running --services | grep -qx backend
           docker compose -f Portal-do-Aluno-entrega/compose.yaml ps --status running --services | grep -qx frontend
 
@@ -41,8 +39,10 @@ jobs:
             test "$code" -ge 200 && test "$code" -lt 500
           done
 
+      - name: Testar comunicacao entre frontend e backend
+        run: |
+          docker compose -f Portal-do-Aluno-entrega/compose.yaml exec -T frontend python -c "import urllib.request; r=urllib.request.urlopen('http://backend:8000/api/integracoes/status/', timeout=10); print('Backend respondeu:', r.status); print(r.read().decode()); assert r.status == 200"
+
       - name: Encerrar containers
         if: always()
         run: docker compose -f Portal-do-Aluno-entrega/compose.yaml down -v
-
-     
