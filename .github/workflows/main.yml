@@ -52,6 +52,52 @@ jobs:
         run: |
           docker compose -f Portal-do-Aluno-entrega/compose.yaml exec -T frontend python -c "import json, urllib.request; req=urllib.request.Request('http://backend:8000/api/auth/login/', data=json.dumps({'email':'ci-test@example.com','password':'CI-Test-Password-123!'}).encode(), headers={'Content-Type':'application/json'}); response=urllib.request.urlopen(req, timeout=10); data=json.loads(response.read()); assert response.status == 200 and 'access' in data and 'refresh' in data, 'Login ou tokens JWT inválidos'; print('LOGIN OK: tokens JWT recebidos')"
 
+      - name: Testar renovacao automatica do JWT
+        run: |
+          docker compose -f Portal-do-Aluno-entrega/compose.yaml exec -T frontend python - <<'PY'
+          import os
+          import json
+          from urllib.request import Request, urlopen
+
+          os.environ.setdefault("DJANGO_SETTINGS_MODULE", "portal_aluno.settings")
+
+          import django
+          django.setup()
+
+          from core.api_client import api_request
+
+          login = Request(
+              "http://backend:8000/api/auth/login/",
+              data=json.dumps({
+                  "email": "ci-test@example.com",
+                  "password": "CI-Test-Password-123!"
+              }).encode(),
+              headers={"Content-Type": "application/json"}
+          )
+
+          with urlopen(login, timeout=10) as response:
+              tokens = json.loads(response.read())
+
+          refresh_original = tokens["refresh"]
+
+          sessao = {
+              "api_access": "token-expirado",
+              "api_refresh": refresh_original
+          }
+
+          perfil = api_request(
+              "me/",
+              token="token-expirado",
+              session=sessao
+          )
+
+          assert isinstance(perfil, dict), "Perfil não retornado"
+          assert sessao["api_access"] != "token-expirado", "Access não renovado"
+          assert sessao["api_refresh"] != refresh_original, "Refresh não rotacionado"
+
+          print("JWT REFRESH OK: token renovado, rotacionado e API acessível.")
+          PY
+
       - name: Encerrar containers
         if: always()
         run: docker compose -f Portal-do-Aluno-entrega/compose.yaml down -v
