@@ -44,6 +44,14 @@ jobs:
           docker compose -f Portal-do-Aluno-entrega/compose.yaml exec -T frontend python -c "from urllib.request import urlopen; from urllib.error import HTTPError; url='http://backend:8000/api/integracoes/status/'; exec(\"try:\\n r=urlopen(url, timeout=10); status=r.status\\nexcept HTTPError as e:\\n status=e.code\"); print('Resposta do backend:', status); assert status in (200, 401, 403), f'Erro inesperado: {status}'"
 
 
+      - name: Criar usuario temporario para teste
+        run: |
+          docker compose -f Portal-do-Aluno-entrega/compose.yaml exec -T backend python manage.py shell -c "from accounts.models import User; User.objects.filter(email='ci-test@example.com').delete(); User.objects.create_user(username='ci-test-user', email='ci-test@example.com', password='CI-Test-Password-123!', role=User.Role.STUDENT)"
+
+      - name: Testar autenticacao e tokens JWT
+        run: |
+          docker compose -f Portal-do-Aluno-entrega/compose.yaml exec -T frontend python -c "import json, urllib.request; req=urllib.request.Request('http://backend:8000/api/auth/login/', data=json.dumps({'email':'ci-test@example.com','password':'CI-Test-Password-123!'}).encode(), headers={'Content-Type':'application/json'}); response=urllib.request.urlopen(req, timeout=10); data=json.loads(response.read()); assert response.status == 200 and 'access' in data and 'refresh' in data, 'Login ou tokens JWT inválidos'; print('LOGIN OK: tokens JWT recebidos')"
+
       - name: Encerrar containers
         if: always()
         run: docker compose -f Portal-do-Aluno-entrega/compose.yaml down -v
